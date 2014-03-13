@@ -16,17 +16,15 @@ use Niseredis\Database\Database;
 
 class Engine
 {
+    private $database;
+
     public function __construct(Database $database)
     {
-        $this->setDatabase($database);
+        $this->database = $database;
     }
 
     public function setDatabase(Database $database)
     {
-        if (!$database) {
-            throw new InvalidArgumentException("Database cannot be NULL");
-        }
-
         $this->database = $database;
     }
 

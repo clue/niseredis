@@ -17,32 +17,14 @@ use Niseredis\Engine;
 
 class Redis
 {
-    private $databases;
+    private $server;
+    private $engine;
 
-    public function __construct()
+    public function __construct(Server $server)
     {
-        $database = $this->initializeDatabases();
-        $this->engine = new Engine\Engine($database);
+        $this->server = $server;
+        $this->engine = new Engine\Engine($server->getDatabaseDefault());
     }
-
-    protected function initializeDatabases($count = 16)
-    {
-        for ($i = 0; $i < $count; $i++) {
-            $this->databases[] = new Database\Database();
-        }
-
-        return $this->databases[0];
-    }
-
-    protected function getDatabaseByIndex($index)
-    {
-        if ($index < 0 || $index >= count($this->databases)) {
-            throw new OutOfRangeException('invalid DB index');
-        }
-
-        return $this->databases[$index];
-    }
-
 
     // Keys
 
@@ -63,7 +45,7 @@ class Redis
 
     public function move($key, $dbindex)
     {
-        $database = $this->getDatabaseByIndex($dbindex);
+        $database = $this->server->getDatabaseByIndex($dbindex);
         $result = $this->engine->getDatabase()->move($key, $database);
 
         return (int) $result;
@@ -595,7 +577,7 @@ class Redis
 
     public function select($index)
     {
-        $database = $this->getDatabaseByIndex($index);
+        $database = $this->server->getDatabaseByIndex($index);
         $this->engine->setDatabase($database);
 
         return true;
@@ -611,7 +593,7 @@ class Redis
 
     public function flushall()
     {
-        foreach ($this->databases as $database) {
+        foreach ($this->server->getDatabases() as $database) {
             $database->flush();
         }
 
@@ -639,7 +621,7 @@ class Redis
             'Keyspace' => array(),
         );
 
-        foreach ($this->databases as $index => $database) {
+        foreach ($this->server->getDatabases() as $index => $database) {
             if ($keys = count($database)) {
                 $info['Keyspace']["db$index"] = "keys=$keys,expires=0,avg_ttl=0";
             }
