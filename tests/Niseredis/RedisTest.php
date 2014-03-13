@@ -19,4 +19,11 @@ class RedisTest extends \TestCase
     public function testConstructor()
     {
     }
+
+    public function testFunctionalGetSet()
+    {
+        $this->assertNull($this->redis->get('key'));
+        $this->assertTrue($this->redis->set('key', 'value'));
+        $this->assertEquals('value', $this->redis->get('key'));
+    }
 }
