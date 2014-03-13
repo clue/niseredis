@@ -23,14 +23,71 @@ class Engine
         $this->database = $database;
     }
 
-    public function setDatabase(Database $database)
+    // Keys
+
+    public function delete(array $keys)
     {
-        $this->database = $database;
+        return $this->database->delete($keys);
     }
 
-    public function getDatabase()
+    public function exists($key)
     {
-        return $this->database;
+        return (int) $this->database->exists($key);
+    }
+
+    public function expire($key, $seconds)
+    {
+        return (int) $this->database->expireat($key, microtime(true) + $seconds);
+    }
+
+    public function move($key, Database $database)
+    {
+        $result = $this->database->move($key, $database);
+
+        return (int) $result;
+    }
+
+    public function persist($key)
+    {
+        return (int) $this->database->persist($key);
+    }
+
+    public function keys($pattern)
+    {
+        return $this->database->keys($pattern);
+    }
+
+    public function randomkey()
+    {
+        return $this->database->random();
+    }
+
+    public function rename($key, $newkey)
+    {
+        $this->database->rename($key, $newkey);
+
+        return true;
+    }
+
+    public function renamenx($key, $newkey)
+    {
+        if ($this->database->exists($newkey)) {
+            return 0;
+        }
+
+        $this->database->rename($key, $newkey);
+
+        return 1;
+    }
+
+    public function ttl($key)
+    {
+        return round($this->database->ttl($key));
+    }
+
+    public function type($key)
+    {
+        return $this->database->type($key);
     }
 
     // Strings
@@ -716,5 +773,30 @@ class Engine
         }
 
         return array();
+    }
+
+
+    // Connection
+
+    public function select(Database $database)
+    {
+        $this->database = $database;
+
+        return true;
+    }
+
+
+    // Server
+
+    public function dbsize()
+    {
+        return count($this->database);
+    }
+
+    public function flushdb()
+    {
+        $this->database->flush();
+
+        return true;
     }
 }

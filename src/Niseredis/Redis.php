@@ -26,74 +26,67 @@ class Redis
         $this->engine = new Engine\Engine($server->getDatabaseDefault());
     }
 
+
     // Keys
 
     public function del(/* $key, [$key ...] */)
     {
-        return $this->engine->getDatabase()->delete(func_get_args());
+        return $this->engine->delete(func_get_args());
     }
 
     public function exists($key)
     {
-        return (int) $this->engine->getDatabase()->exists($key);
+        return (int) $this->engine->exists($key);
     }
 
     public function expire($key, $seconds)
     {
-        return (int) $this->engine->getDatabase()->expireat($key, microtime(true) + $seconds);
+        return (int) $this->engine->expire($key, $seconds);
     }
 
     public function move($key, $dbindex)
     {
         $database = $this->server->getDatabaseByIndex($dbindex);
-        $result = $this->engine->getDatabase()->move($key, $database);
+        $result = $this->engine->move($key, $database);
 
         return (int) $result;
     }
 
     public function persist($key)
     {
-        return (int) $this->engine->getDatabase()->persist($key);
+        return (int) $this->engine->persist($key);
     }
 
     public function keys($pattern)
     {
-        return $this->engine->getDatabase()->keys($pattern);
+        return $this->engine->keys($pattern);
     }
 
     public function randomkey()
     {
-        return $this->engine->getDatabase()->random();
+        return $this->engine->randomkey();
     }
 
     public function rename($key, $newkey)
     {
-        $this->engine->getDatabase()->rename($key, $newkey);
+        $this->engine->rename($key, $newkey);
 
         return true;
     }
 
     public function renamenx($key, $newkey)
     {
-        $database = $this->engine->getDatabase();
-
-        if ($database->exists($newkey)) {
-            return 0;
-        }
-
-        $database->rename($key, $newkey);
-
-        return 1;
+        return $this->engine->renamenx($key, $newkey);
     }
 
     public function ttl($key)
     {
-        return round($this->engine->getDatabase()->ttl($key));
+        return round($this->engine->ttl($key));
     }
 
     public function type($key)
     {
-        return $this->engine->getDatabase()->type($key);
+        return $this->engine->type($key);
     }
 
 
@@ -578,7 +571,7 @@ class Redis
     public function select($index)
     {
         $database = $this->server->getDatabaseByIndex($index);
-        $this->engine->setDatabase($database);
+        $this->engine->select($database);
 
         return true;
     }
@@ -588,7 +581,7 @@ class Redis
 
     public function dbsize()
     {
-        return count($this->engine->getDatabase());
+        return $this->engine->dbsize();
     }
 
     public function flushall()
@@ -602,9 +595,7 @@ class Redis
 
     public function flushdb()
     {
-        $this->engine->getDatabase()->flush();
-
-        return true;
+        return $this->engine->flushdb();
     }
 
     public function info($section = null)
