@@ -20,10 +20,14 @@ class Redis
     private $server;
     private $engine;
 
-    public function __construct(Server $server)
+    public function __construct(Server $server, Engine\Engine $engine = null)
     {
+        if ($engine === null) {
+            $engine = new Engine\Engine($server->getDatabaseDefault());
+        }
+
         $this->server = $server;
-        $this->engine = new Engine\Engine($server->getDatabaseDefault());
+        $this->engine = $engine;
     }
 
 
