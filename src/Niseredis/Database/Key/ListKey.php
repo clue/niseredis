@@ -16,13 +16,8 @@ use OutOfRangeException;
 
 class ListKey implements KeyInterface
 {
-    protected $list;
+    protected $list = array();
     protected $expiration = null;
-
-    public function __construct()
-    {
-        $this->list = array();
-    }
 
     public function getType()
     {

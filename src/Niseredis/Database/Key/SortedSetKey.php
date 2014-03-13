@@ -13,13 +13,8 @@ namespace Niseredis\Database\Key;
 
 class SortedSetKey implements KeyInterface
 {
-    protected $members;
+    protected $members = array();
     protected $expiration = null;
-
-    public function __construct()
-    {
-        $this->members = array();
-    }
 
     public function getType()
     {

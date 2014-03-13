@@ -15,13 +15,8 @@ use UnexpectedValueException;
 
 class HashKey implements KeyInterface
 {
-    protected $dictionary;
+    protected $dictionary = array();
     protected $expiration = null;
-
-    public function __construct()
-    {
-        $this->dictionary = array();
-    }
 
     public function getType()
     {
