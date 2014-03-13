@@ -59,7 +59,7 @@ class Engine
 
     public function randomkey()
     {
-        return $this->database->random();
+        return $this->database->randomkey();
     }
 
     public function rename($key, $newkey)

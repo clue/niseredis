@@ -55,13 +55,9 @@ class Keyspace implements ArrayAccess, Countable, IteratorAggregate
         $this->keyspace = array();
     }
 
-    public function getRandom()
+    public function getRandomKey()
     {
-        if (!$key = array_rand($this->keyspace)) {
-            return null;
-        }
-
-        return array($key, $this->keyspace[$key]);
+        return ($this->keyspace ? array_rand($this->keyspace) : null);
     }
 
     public function offsetSet($key, $object)

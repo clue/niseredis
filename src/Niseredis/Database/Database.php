@@ -268,15 +268,11 @@ class Database implements Countable
         }
     }
 
-    public function random()
+    public function randomkey()
     {
-        while (count($this->keyspace)) {
-            list($key, $object) = $this->keyspace->getRandom();
+        $this->gc();
 
-            if (!$this->gcKey($key, $object)) {
-                return $key;
-            }
-        }
+        return $this->keyspace->getRandomKey();
     }
 
     public function type($key)
